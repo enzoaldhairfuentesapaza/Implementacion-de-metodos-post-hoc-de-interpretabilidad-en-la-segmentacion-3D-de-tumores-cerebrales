@@ -1,1 +1,1 @@
-# Implementaci-n-de-m-todos-post-hoc-de-interpretabilidad-en-la-segmentaci-n-3D-de-tumores-cerebrales
+# Implementacion-de-metodos-post-hoc-de-interpretabilidad-en-la-segmentacion-3D-de-tumores-cerebrales
