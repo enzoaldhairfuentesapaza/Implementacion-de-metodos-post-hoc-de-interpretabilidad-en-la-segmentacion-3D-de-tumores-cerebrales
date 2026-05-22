@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Dataset
+datasets/
+BraTS2020_TrainingData.zip
+
+# Outputs
+outputs/
+
+# Models
+models/*.pth
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
