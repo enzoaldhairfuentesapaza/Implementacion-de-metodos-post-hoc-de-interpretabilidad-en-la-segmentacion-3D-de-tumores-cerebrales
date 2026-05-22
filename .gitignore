@@ -9,14 +9,19 @@ venv/
 datasets/
 BraTS2020_TrainingData.zip
 
-# Outputs
-outputs/
-
 # Models
-models/*.pth
+models/
+
+# Ignore only heavy output files
+outputs/**/*.nii
+outputs/**/*.nii.gz
+outputs/**/*.pth
 
 # VSCode
 .vscode/
+
+# Jupyter
+.ipynb_checkpoints/
 
 # OS
 .DS_Store
