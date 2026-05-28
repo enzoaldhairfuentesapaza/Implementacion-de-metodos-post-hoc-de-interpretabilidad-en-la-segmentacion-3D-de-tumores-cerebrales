@@ -1,28 +1,6 @@
-# Python
-__pycache__/
-*.pyc
-
-# Virtual environment
-venv/
-
 # Dataset
-datasets/
-BraTS2020_TrainingData.zip
+datasets/BraTS2020_TrainingData/
+datasets/BraTS_subset/
 
-# Models
-models/
-
-# Ignore only heavy output files
-outputs/**/*.nii
-outputs/**/*.nii.gz
-outputs/**/*.pth
-
-# VSCode
-.vscode/
-
-# Jupyter
-.ipynb_checkpoints/
-
-# OS
-.DS_Store
-Thumbs.db
+# Python virtual environment
+venv/
