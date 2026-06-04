@@ -1,5 +1,5 @@
 # Dataset
-datasets/BraTS2020_TrainingData/
+datasets/BraTS2020/
 datasets/BraTS_subset/
 
 # Python virtual environment
