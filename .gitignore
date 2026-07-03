@@ -1,6 +1,36 @@
-# Dataset
-datasets/BraTS2020/
-datasets/BraTS_subset/
+# Entorno virtual
+.venv/
 
-# Python virtual environment
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# VS Code
+.vscode/
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Modelos pesados (si no quieres subirlos)
+*.pth
+*.pt
+
+# Outputs
+outputs/
+
+# Dataset (si es muy grande)
+datasets/git status
+
+
 venv/
+.venv/
+
+datasets/
+outputs/
+
+*.zip
+
+__pycache__/
+*.pyc

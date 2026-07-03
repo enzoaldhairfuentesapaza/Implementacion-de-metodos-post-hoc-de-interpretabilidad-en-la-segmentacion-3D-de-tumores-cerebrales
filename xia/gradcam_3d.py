@@ -4,6 +4,7 @@ import numpy as np
 
 
 class GradCAM3D:
+
     def __init__(self, model, target_layer):
         self.model = model
         self.target_layer = target_layer
@@ -19,38 +20,49 @@ class GradCAM3D:
     def _save_gradient(self, module, grad_input, grad_output):
         self._gradients["value"] = grad_output[0].detach()
 
-    def compute(self, input_tensor, target_class=3):
+    def compute(self, input_tensor, target_class=3, mask_gt=None):
+
         self.model.eval()
         self.model.zero_grad()
 
-        output = self.model(input_tensor)
+        output = self.model(input_tensor) 
         pred_labels = torch.argmax(output, dim=1).squeeze(0)
-
-        probs = torch.softmax(output, dim=1)
-        score = (output[0, target_class] * probs[0, target_class]).sum()
+        if mask_gt is not None:
+            roi = (mask_gt > 0).float().to(input_tensor.device)
+            if roi.sum() >= 1:
+                score = (output[0, target_class] * roi).sum()
+            else:
+                score = output[0, target_class].sum()
+        else:
+            score = output[0, target_class].sum()
 
         self.model.zero_grad()
         score.backward()
 
-        act  = self._activations["value"] 
-        grad = self._gradients["value"]
+        act  = self._activations["value"]  
+        grad = self._gradients["value"] 
 
         weights = grad.mean(dim=[0, 2, 3, 4])
 
-        weighted = act.clone()
-        for i in range(weighted.shape[1]):
-            weighted[:, i] *= weights[i]
-
-        heatmap = weighted.sum(dim=1).squeeze()
-        heatmap = torch.relu(heatmap)
+        weighted = (act * weights[None, :, None, None, None]).sum(dim=1)
+        heatmap = torch.relu(weighted).squeeze(0)
 
         target_size = (input_tensor.shape[2], input_tensor.shape[3], input_tensor.shape[4])
-        heatmap = F.interpolate(heatmap.unsqueeze(0).unsqueeze(0),size=target_size,mode="trilinear", align_corners=False).squeeze()
+        heatmap = F.interpolate(
+            heatmap.unsqueeze(0).unsqueeze(0),
+            size=target_size,
+            mode="trilinear",
+            align_corners=False,
+        ).squeeze()
 
         p1  = torch.quantile(heatmap, 0.01)
         p99 = torch.quantile(heatmap, 0.99)
-        heatmap = torch.clamp(heatmap, p1, p99)
-        heatmap = (heatmap - p1) / (p99 - p1 + 1e-8)
+        denom = p99 - p1
+        if denom < 1e-8:
+            heatmap = torch.zeros_like(heatmap)
+        else:
+            heatmap = torch.clamp(heatmap, p1, p99)
+            heatmap = (heatmap - p1) / denom
 
         return heatmap.cpu().numpy(), pred_labels.cpu().numpy()
 
